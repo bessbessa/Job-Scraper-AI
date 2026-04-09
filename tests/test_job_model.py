@@ -42,3 +42,14 @@ def test_job_listing_rejects_extra_fields() -> None:
         assert "unexpected" in str(exc)
     else:
         raise AssertionError("Expected validation error")
+
+
+def test_job_listing_allows_missing_location() -> None:
+    listing = JobListing(
+        title="Python Developer",
+        company="Acme",
+        job_url="https://example.com/jobs/123",
+        source="indeed",
+    )
+
+    assert listing.location is None

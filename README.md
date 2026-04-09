@@ -7,7 +7,7 @@ Job Scraper in Q2 2026.
 ### Weeks 1-2: Foundation and first scraper
 Establish the Python project structure, dependency management, and configuration baseline. In parallel, define the job listing data model, implement the first Indeed scraper, and add the initial unit test coverage needed to validate the core pipeline.
 
-Chosen stack for Week 1-2: requests, lxml, pydantic, python-dotenv, pytest, pytest-cov, tenacity.
+Chosen stack for Week 1-2: requests(fetching), lxml(parsing), pydantic, python-dotenv, pytest, pytest-cov, tenacity.
 
 ### Weeks 3-4: Matching and filtering
 Add the job matching layer, introduce location and seniority filters, and validate the classifier logic with tests.
@@ -34,6 +34,11 @@ For the first sprint, the project should focus on the smallest set of decisions 
 4. Implement the first Indeed scraper against the schema.
 5. Add tests for parsing, exports, and failure cases.
 6. Document the expected local setup and run commands.
+
+## Week 1-2 Remaining Work
+
+Tasks 2-7 are still the real sprint work.
+That means the scraper fetch, HTML parsing, job-card extraction, field mapping, pagination, rate limiting, and fixture-based tests still need to be finished.
 
 ## Recommended Deliverables For Week 1-2
 

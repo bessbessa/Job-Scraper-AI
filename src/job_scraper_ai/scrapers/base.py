@@ -9,5 +9,11 @@ class ScraperBase(ABC):
     source_name: str
 
     @abstractmethod
-    def scrape(self, keyword: str, *, location: str | None = None) -> list[JobListing]:
+    def scrape(
+        self,
+        keyword: str,
+        *,
+        location: str | None = None,
+        max_pages: int = 1,
+    ) -> list[JobListing]:
         raise NotImplementedError
