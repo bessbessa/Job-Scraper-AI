@@ -12,7 +12,7 @@ DEFAULT_OUTPUT_DIR: Final = Path("data/output")
 
 @dataclass(frozen=True, slots=True)
 class Settings:
-    default_site: str = "indeed"
+    default_site: str = "auto"
     default_keyword: str = "python"
     default_location: str = ""
     output_dir: Path = DEFAULT_OUTPUT_DIR
@@ -20,6 +20,8 @@ class Settings:
     request_delay_min: float = 2.0
     request_delay_max: float = 5.0
     user_agent: str = "Job-Scraper-AI/0.1.0"
+    lever_company: str = ""
+    source_order: str = "jobmensa,lever"
 
 
 def get_settings() -> Settings:
@@ -28,7 +30,7 @@ def get_settings() -> Settings:
     from os import getenv
 
     return Settings(
-        default_site=getenv("DEFAULT_SITE", "indeed"),
+        default_site=getenv("DEFAULT_SITE", "auto"),
         default_keyword=getenv("DEFAULT_KEYWORD", "python"),
         default_location=getenv("DEFAULT_LOCATION", ""),
         output_dir=Path(getenv("OUTPUT_DIR", str(DEFAULT_OUTPUT_DIR))),
@@ -36,4 +38,6 @@ def get_settings() -> Settings:
         request_delay_min=float(getenv("REQUEST_DELAY_MIN", "2")),
         request_delay_max=float(getenv("REQUEST_DELAY_MAX", "5")),
         user_agent=getenv("USER_AGENT", "Job-Scraper-AI/0.1.0"),
+        lever_company=getenv("LEVER_COMPANY", ""),
+        source_order=getenv("SOURCE_ORDER", "jobmensa,lever"),
     )

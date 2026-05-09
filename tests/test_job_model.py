@@ -10,7 +10,8 @@ def test_job_listing_to_csv_row_serializes_expected_fields() -> None:
         job_id="123",
         title="Python Developer",
         company="Acme",
-        location="Remote",
+        city="Hamburg",
+        work_type="hybrid",
         salary_min=100000,
         salary_max=140000,
         currency="USD",
@@ -25,6 +26,8 @@ def test_job_listing_to_csv_row_serializes_expected_fields() -> None:
     assert row["title"] == "Python Developer"
     assert row["job_url"] == "https://example.com/jobs/123"
     assert row["date_posted"] == "2026-04-01T00:00:00+00:00"
+    assert row["city"] == "Hamburg"
+    assert row["work_type"] == "hybrid"
 
 
 def test_job_listing_rejects_extra_fields() -> None:
@@ -52,4 +55,5 @@ def test_job_listing_allows_missing_location() -> None:
         source="indeed",
     )
 
-    assert listing.location is None
+    assert listing.city is None
+    assert listing.work_type is None

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "abc123",
+    "text": "Backend Engineer",
+    "hostedUrl": "https://jobs.lever.co/example/backend-engineer",
+    "categories": {
+      "location": "Berlin",
+      "commitment": "Full-time",
+      "team": "Engineering"
+    },
+    "descriptionPlain": "Build APIs and services for healthcare software.",
+    "createdAt": 1710000000000
+  },
+  {
+    "id": "def456",
+    "text": "Support Specialist",
+    "hostedUrl": "https://jobs.lever.co/example/support-specialist",
+    "categories": {
+      "location": "Hamburg",
+      "commitment": "Part-time",
+      "team": "Customer Support"
+    },
+    "descriptionPlain": "Support clinic clients via chat and email.",
+    "createdAt": 1711000000000
+  }
+]

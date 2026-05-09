@@ -16,7 +16,8 @@ class JobListing(BaseModel):
     job_id: str | None = None
     title: str
     company: str
-    location: str | None = None
+    city: str | None = None
+    work_type: str | None = None
     salary_min: int | None = None
     salary_max: int | None = None
     currency: str | None = None
@@ -32,7 +33,8 @@ class JobListing(BaseModel):
             "job_id",
             "title",
             "company",
-            "location",
+            "city",
+            "work_type",
             "salary_min",
             "salary_max",
             "currency",
@@ -49,7 +51,8 @@ class JobListing(BaseModel):
             "job_id": "" if data["job_id"] is None else str(data["job_id"]),
             "title": str(data["title"]),
             "company": str(data["company"]),
-            "location": "" if data["location"] is None else str(data["location"]),
+            "city": "" if data["city"] is None else str(data["city"]),
+            "work_type": "" if data["work_type"] is None else str(data["work_type"]),
             "salary_min": "" if data["salary_min"] is None else str(data["salary_min"]),
             "salary_max": "" if data["salary_max"] is None else str(data["salary_max"]),
             "currency": "" if data["currency"] is None else str(data["currency"]),

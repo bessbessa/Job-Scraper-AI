@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 
 from job_scraper_ai.config import get_settings
-from job_scraper_ai.scrapers import IndeedScraper
+from job_scraper_ai.scrapers import IndeedScraper, JobmensaScraper, LeverScraper, build_source_router
 from job_scraper_ai.services import Exporter
 from job_scraper_ai.utils.logging import configure_logging
 
@@ -23,6 +23,7 @@ def build_parser() -> argparse.ArgumentParser:
     scrape_parser.add_argument("--location", default=None)
     scrape_parser.add_argument("--format", choices=("csv", "json"), default="csv")
     scrape_parser.add_argument("--output", default=None)
+    scrape_parser.add_argument("--browser", action="store_true", help="Fetch pages with a real browser")
     scrape_parser.set_defaults(handler=handle_scrape)
 
     return parser
@@ -33,6 +34,8 @@ def handle_doctor(_: argparse.Namespace) -> int:
     print(f"default_site={settings.default_site}")
     print(f"default_keyword={settings.default_keyword}")
     print(f"output_dir={settings.output_dir}")
+    print(f"lever_company={settings.lever_company or '<unset>'}")
+    print(f"source_order={settings.source_order}")
     return 0
 
 
@@ -42,15 +45,23 @@ def handle_scrape(args: argparse.Namespace) -> int:
     keyword = args.keyword or settings.default_keyword
     location = args.location if args.location is not None else settings.default_location or None
 
-    if site.lower() != "indeed":
+    site_key = site.lower()
+    if site_key == "auto":
+        scraper = build_source_router(settings, use_browser=args.browser)
+    elif site_key == "indeed":
+        scraper = IndeedScraper(use_browser=args.browser)
+    elif site_key == "jobmensa":
+        scraper = JobmensaScraper(use_browser=args.browser)
+    elif site_key == "lever":
+        scraper = LeverScraper(settings=settings)
+    else:
         raise SystemExit(f"Unsupported site: {site}")
 
-    scraper = IndeedScraper()
     jobs = scraper.scrape(keyword, location=location)
 
     exporter = Exporter()
     output_dir = Path(args.output) if args.output else settings.output_dir
-    output_path = output_dir / f"{site.lower()}_{keyword.lower().replace(' ', '_')}.{args.format}"
+    output_path = output_dir / f"{site_key}_{keyword.lower().replace(' ', '_')}.{args.format}"
 
     if args.format == "csv":
         exporter.export_csv(jobs, output_path)

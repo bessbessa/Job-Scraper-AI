@@ -27,6 +27,16 @@ class FakeSession:
         return FakeResponse(self.responses[url])
 
 
+class FakeBrowserFetcher:
+    def __init__(self, response_html: str) -> None:
+        self.response_html = response_html
+        self.requests: list[str] = []
+
+    def fetch_html(self, url: str) -> str:
+        self.requests.append(url)
+        return self.response_html
+
+
 def test_build_search_url_includes_keyword_location_and_start() -> None:
     scraper = IndeedScraper(settings=Settings())
 
@@ -48,14 +58,16 @@ def test_parse_search_results_extracts_job_cards() -> None:
     first_job = jobs[0]
     assert first_job.title == "Python Developer"
     assert first_job.company == "Acme Labs"
-    assert first_job.location == "Remote"
+    assert first_job.city == "Hamburg"
+    assert first_job.work_type == "hybrid"
     assert str(first_job.job_url) == "https://www.indeed.com/viewjob?jk=abc123"
     assert first_job.salary_min == 100000
     assert first_job.salary_max == 140000
     assert first_job.currency == "USD"
 
     second_job = jobs[1]
-    assert second_job.location == "New York, NY"
+    assert second_job.city == "München"
+    assert second_job.work_type is None
     assert second_job.salary_min is None
     assert second_job.salary_max is None
 
@@ -82,6 +94,17 @@ def test_scrape_paginates_and_applies_delay() -> None:
     assert delays == [2.0]
 
 
+def test_scrape_uses_browser_fetcher_when_enabled() -> None:
+    page_1 = Path("tests/fixtures/indeed_page_1.html").read_text(encoding="utf-8")
+    browser_fetcher = FakeBrowserFetcher(page_1)
+    scraper = IndeedScraper(settings=Settings(), use_browser=True, browser_fetcher=browser_fetcher)
+
+    jobs = scraper.scrape("python", max_pages=1)
+
+    assert len(jobs) == 2
+    assert browser_fetcher.requests == ["https://www.indeed.com/jobs?q=python&start=0"]
+
+
 def test_parse_search_results_skips_cards_missing_required_fields() -> None:
     html_content = """
     <html><body>
@@ -95,3 +118,22 @@ def test_parse_search_results_skips_cards_missing_required_fields() -> None:
     jobs = scraper.parse_search_results(html_content)
 
     assert jobs == []
+
+
+def test_parse_search_results_keeps_city_and_work_type_blank_when_missing() -> None:
+        html_content = """
+        <html><body>
+            <div class='job_seen_beacon' data-jk='xyz123'>
+                <h2 class='jobTitle'><span>Backend Engineer</span></h2>
+                <span class='companyName'>Quiet Labs</span>
+                <a class='jcs-JobTitle' href='/viewjob?jk=xyz123'>View job</a>
+            </div>
+        </body></html>
+        """
+        scraper = IndeedScraper(settings=Settings())
+
+        jobs = scraper.parse_search_results(html_content)
+
+        assert len(jobs) == 1
+        assert jobs[0].city is None
+        assert jobs[0].work_type is None
